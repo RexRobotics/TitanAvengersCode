@@ -11,18 +11,17 @@ import com.qualcomm.robotcore.util.Range;
 public class TeleOp_BioBuzz extends LinearOpMode {
 
     DcMotor driveFL, driveFR, driveRL, driveRR;
-    DcMotor intake, shooter;
+    // DcMotor intake, shooter;
 
-    // shooter speeds (tune after testing)
-    double hivePower = 1.0;
-    double flowerPower = 0.55;
-    double shooterPower = hivePower;
-    boolean shooterOn = false;
-    String currentPreset = "HIVE";
+    // double hivePower = 1.0;
+    // double flowerPower = 0.55;
+    // double shooterPower = hivePower;
+    // boolean shooterOn = false;
+    // String currentPreset = "HIVE";
 
-    boolean lastRightBumper = false;
-    boolean lastDpadUp = false;
-    boolean lastDpadDown = false;
+    // boolean lastRightBumper = false;
+    // boolean lastDpadUp = false;
+    // boolean lastDpadDown = false;
 
     ElapsedTime matchTimer = new ElapsedTime();
 
@@ -33,10 +32,9 @@ public class TeleOp_BioBuzz extends LinearOpMode {
         driveRL = hardwareMap.get(DcMotor.class, "driveRL");
         driveRR = hardwareMap.get(DcMotor.class, "driveRR");
 
-        intake = hardwareMap.get(DcMotor.class, "intake");
-        shooter = hardwareMap.get(DcMotor.class, "shooter");
+        // intake = hardwareMap.get(DcMotor.class, "intake");
+        // shooter = hardwareMap.get(DcMotor.class, "shooter");
 
-        // reverse right side
         driveFR.setDirection(DcMotorSimple.Direction.REVERSE);
         driveRR.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -44,10 +42,9 @@ public class TeleOp_BioBuzz extends LinearOpMode {
         driveFR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         driveRL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         driveRR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        // intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        // let flywheel coast on stop
-        shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        // shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         telemetry.addData("Status", "BioBuzz Ready");
         telemetry.update();
@@ -64,14 +61,12 @@ public class TeleOp_BioBuzz extends LinearOpMode {
             if (Math.abs(x) < 0.05) x = 0;
             if (Math.abs(rx) < 0.05) rx = 0;
 
-            // smooth turning for aiming
             if (rx >= 0) {
                 rx = rx * rx;
             } else {
                 rx = -(rx * rx);
             }
 
-            // slow mode on LT
             double speedMultiplier = 1.0 - (0.7 * gamepad1.left_trigger);
 
             double fl = y + x + rx;
@@ -95,67 +90,63 @@ public class TeleOp_BioBuzz extends LinearOpMode {
             driveFR.setPower(fr * speedMultiplier);
             driveRR.setPower(rr * speedMultiplier);
 
-            // intake: RT = in, LB = reverse
-            double intakePower = 0;
-            if (gamepad1.left_bumper) {
-                intakePower = -1.0;
-            } else if (gamepad1.right_trigger > 0.1) {
-                intakePower = gamepad1.right_trigger;
-            }
-            intake.setPower(intakePower);
+            // double intakePower = 0;
+            // if (gamepad1.left_bumper) {
+            //     intakePower = -1.0;
+            // } else if (gamepad1.right_trigger > 0.1) {
+            //     intakePower = gamepad1.right_trigger;
+            // }
+            // intake.setPower(intakePower);
 
-            // shooter: X = hive, Y = flower, B = off
-            if (gamepad1.x) {
-                shooterPower = hivePower;
-                currentPreset = "HIVE";
-                shooterOn = true;
-            } else if (gamepad1.y) {
-                shooterPower = flowerPower;
-                currentPreset = "FLOWER";
-                shooterOn = true;
-            } else if (gamepad1.b) {
-                shooterOn = false;
-            }
+            // if (gamepad1.x) {
+            //     shooterPower = hivePower;
+            //     currentPreset = "HIVE";
+            //     shooterOn = true;
+            // } else if (gamepad1.y) {
+            //     shooterPower = flowerPower;
+            //     currentPreset = "FLOWER";
+            //     shooterOn = true;
+            // } else if (gamepad1.b) {
+            //     shooterOn = false;
+            // }
 
-            // RB toggles flywheel
-            if (gamepad1.right_bumper && !lastRightBumper) {
-                shooterOn = !shooterOn;
-            }
-            lastRightBumper = gamepad1.right_bumper;
+            // if (gamepad1.right_bumper && !lastRightBumper) {
+            //     shooterOn = !shooterOn;
+            // }
+            // lastRightBumper = gamepad1.right_bumper;
 
-            // dpad up/down adjusts speed by 5%
-            if (gamepad1.dpad_up && !lastDpadUp) {
-                shooterPower = Range.clip(shooterPower + 0.05, 0.2, 1.0);
-                currentPreset = "CUSTOM";
-            }
-            if (gamepad1.dpad_down && !lastDpadDown) {
-                shooterPower = Range.clip(shooterPower - 0.05, 0.2, 1.0);
-                currentPreset = "CUSTOM";
-            }
-            lastDpadUp = gamepad1.dpad_up;
-            lastDpadDown = gamepad1.dpad_down;
+            // if (gamepad1.dpad_up && !lastDpadUp) {
+            //     shooterPower = Range.clip(shooterPower + 0.05, 0.2, 1.0);
+            //     currentPreset = "CUSTOM";
+            // }
+            // if (gamepad1.dpad_down && !lastDpadDown) {
+            //     shooterPower = Range.clip(shooterPower - 0.05, 0.2, 1.0);
+            //     currentPreset = "CUSTOM";
+            // }
+            // lastDpadUp = gamepad1.dpad_up;
+            // lastDpadDown = gamepad1.dpad_down;
 
-            if (shooterOn) {
-                shooter.setPower(shooterPower);
-            } else {
-                shooter.setPower(0);
-            }
+            // if (shooterOn) {
+            //     shooter.setPower(shooterPower);
+            // } else {
+            //     shooter.setPower(0);
+            // }
 
             telemetry.addData("Match Timer", (int) matchTimer.seconds() + "s");
 
-            if (shooterOn) {
-                telemetry.addData("Shooter", "ON (" + currentPreset + ") - " + (int) (shooterPower * 100) + "%");
-            } else {
-                telemetry.addData("Shooter", "OFF (Set to " + (int) (shooterPower * 100) + "%)");
-            }
+            // if (shooterOn) {
+            //     telemetry.addData("Shooter", "ON (" + currentPreset + ") - " + (int) (shooterPower * 100) + "%");
+            // } else {
+            //     telemetry.addData("Shooter", "OFF (Set to " + (int) (shooterPower * 100) + "%)");
+            // }
 
-            if (intakePower > 0) {
-                telemetry.addData("Intake", "RUNNING IN");
-            } else if (intakePower < 0) {
-                telemetry.addData("Intake", "REVERSING");
-            } else {
-                telemetry.addData("Intake", "STOPPED");
-            }
+            // if (intakePower > 0) {
+            //     telemetry.addData("Intake", "RUNNING IN");
+            // } else if (intakePower < 0) {
+            //     telemetry.addData("Intake", "REVERSING");
+            // } else {
+            //     telemetry.addData("Intake", "STOPPED");
+            // }
 
             telemetry.update();
         }
