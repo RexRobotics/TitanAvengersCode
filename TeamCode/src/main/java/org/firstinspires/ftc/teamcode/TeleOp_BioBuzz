@@ -1,0 +1,154 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
+
+@TeleOp(name = "TeleOp_BioBuzz", group = "Competition")
+public class TeleOp_BioBuzz extends LinearOpMode {
+
+    DcMotor driveFL, driveFR, driveRL, driveRR;
+    // DcMotor intake, shooter;
+
+    // double hivePower = 1.0;
+    // double flowerPower = 0.55;
+    // double shooterPower = hivePower;
+    // boolean shooterOn = false;
+    // String currentPreset = "HIVE";
+
+    // boolean lastRightBumper = false;
+    // boolean lastDpadUp = false;
+    // boolean lastDpadDown = false;
+
+    ElapsedTime matchTimer = new ElapsedTime();
+
+    @Override
+    public void runOpMode() {
+        driveFL = hardwareMap.get(DcMotor.class, "driveFL");
+        driveFR = hardwareMap.get(DcMotor.class, "driveFR");
+        driveRL = hardwareMap.get(DcMotor.class, "driveRL");
+        driveRR = hardwareMap.get(DcMotor.class, "driveRR");
+
+        // intake = hardwareMap.get(DcMotor.class, "intake");
+        // shooter = hardwareMap.get(DcMotor.class, "shooter");
+
+        driveFR.setDirection(DcMotorSimple.Direction.REVERSE);
+        driveRR.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        driveFL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveFR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveRL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveRR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        // intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        // shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        telemetry.addData("Status", "BioBuzz Ready");
+        telemetry.update();
+
+        waitForStart();
+        matchTimer.reset();
+
+        while (opModeIsActive()) {
+            double y = -gamepad1.left_stick_y;
+            double x = gamepad1.left_stick_x * 1.1;
+            double rx = gamepad1.right_stick_x;
+
+            if (Math.abs(y) < 0.05) y = 0;
+            if (Math.abs(x) < 0.05) x = 0;
+            if (Math.abs(rx) < 0.05) rx = 0;
+
+            if (rx >= 0) {
+                rx = rx * rx;
+            } else {
+                rx = -(rx * rx);
+            }
+
+            double speedMultiplier = 1.0 - (0.7 * gamepad1.left_trigger);
+
+            double fl = y + x + rx;
+            double rl = y - x + rx;
+            double fr = y - x - rx;
+            double rr = y + x - rx;
+
+            double max = Math.max(Math.abs(fl), Math.abs(rl));
+            max = Math.max(max, Math.abs(fr));
+            max = Math.max(max, Math.abs(rr));
+
+            if (max > 1.0) {
+                fl /= max;
+                rl /= max;
+                fr /= max;
+                rr /= max;
+            }
+
+            driveFL.setPower(fl * speedMultiplier);
+            driveRL.setPower(rl * speedMultiplier);
+            driveFR.setPower(fr * speedMultiplier);
+            driveRR.setPower(rr * speedMultiplier);
+
+            // double intakePower = 0;
+            // if (gamepad1.left_bumper) {
+            //     intakePower = -1.0;
+            // } else if (gamepad1.right_trigger > 0.1) {
+            //     intakePower = gamepad1.right_trigger;
+            // }
+            // intake.setPower(intakePower);
+
+            // if (gamepad1.x) {
+            //     shooterPower = hivePower;
+            //     currentPreset = "HIVE";
+            //     shooterOn = true;
+            // } else if (gamepad1.y) {
+            //     shooterPower = flowerPower;
+            //     currentPreset = "FLOWER";
+            //     shooterOn = true;
+            // } else if (gamepad1.b) {
+            //     shooterOn = false;
+            // }
+
+            // if (gamepad1.right_bumper && !lastRightBumper) {
+            //     shooterOn = !shooterOn;
+            // }
+            // lastRightBumper = gamepad1.right_bumper;
+
+            // if (gamepad1.dpad_up && !lastDpadUp) {
+            //     shooterPower = Range.clip(shooterPower + 0.05, 0.2, 1.0);
+            //     currentPreset = "CUSTOM";
+            // }
+            // if (gamepad1.dpad_down && !lastDpadDown) {
+            //     shooterPower = Range.clip(shooterPower - 0.05, 0.2, 1.0);
+            //     currentPreset = "CUSTOM";
+            // }
+            // lastDpadUp = gamepad1.dpad_up;
+            // lastDpadDown = gamepad1.dpad_down;
+
+            // if (shooterOn) {
+            //     shooter.setPower(shooterPower);
+            // } else {
+            //     shooter.setPower(0);
+            // }
+
+            telemetry.addData("Match Timer", (int) matchTimer.seconds() + "s");
+
+            // if (shooterOn) {
+            //     telemetry.addData("Shooter", "ON (" + currentPreset + ") - " + (int) (shooterPower * 100) + "%");
+            // } else {
+            //     telemetry.addData("Shooter", "OFF (Set to " + (int) (shooterPower * 100) + "%)");
+            // }
+
+            // if (intakePower > 0) {
+            //     telemetry.addData("Intake", "RUNNING IN");
+            // } else if (intakePower < 0) {
+            //     telemetry.addData("Intake", "REVERSING");
+            // } else {
+            //     telemetry.addData("Intake", "STOPPED");
+            // }
+
+            telemetry.update();
+        }
+    }
+}
